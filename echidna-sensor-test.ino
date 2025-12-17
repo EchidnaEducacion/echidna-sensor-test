@@ -185,8 +185,11 @@ void iniciarModoMkMk() {
     Serial.println("========================================");
     Serial.println("       TEST MODO MKMK");
     Serial.println("========================================");
-    Serial.println("ATENCION: Cambie el interruptor a modo MkMk");
-    Serial.println("Pulse SR (pulsador derecho) para comenzar...");
+    Serial.println("ATENCION: En modo normal pulsa SR para comenzar.");
+    Serial.println("Después cambie a modo MkMk y pruebe el sensor.");
+    Serial.println("Cuando quiera terminar cambie a modo normal.");
+    Serial.println("Pulse SR para comenzar el test y cambie a modo MkMk para probar el siguiente sensor.");
+    Serial.println("Y así hasta que se terminen todos los test.");
     Serial.println();
     mensajeMostrado = true;
   }
@@ -282,12 +285,12 @@ void leerSensorNormal(int sensor) {
   switch (sensor) {
     case 0: // SR - Pulsador derecho
       Serial.print("SR: ");
-      Serial.println(digitalRead(PIN_SR) == LOW ? "PULSADO" : "NO PULSADO");
+      Serial.println(digitalRead(PIN_SR) == LOW ? "NO PULSADO" : "PULSADO");
       break;
 
     case 1: // SL - Pulsador izquierdo
       Serial.print("SL: ");
-      Serial.println(digitalRead(PIN_SL) == LOW ? "PULSADO" : "NO PULSADO");
+      Serial.println(digitalRead(PIN_SL) == LOW ? "NO PULSADO" : "PULSADO");
       break;
 
     case 2: // Joystick X
