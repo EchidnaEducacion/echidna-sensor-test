@@ -31,6 +31,7 @@ enum Estado {
 Estado estadoActual = INICIO_MODO_NORMAL;
 int sensorActual = 0;
 bool esperandoPulsacion = true;
+bool mensajeMostrado = false;
 unsigned long ultimoRefresh = 0;
 const unsigned long INTERVALO_REFRESH = 500; // 0.5 segundos
 
@@ -63,6 +64,8 @@ const int NUM_SENSORES_MKMK = 8;
 // Variables para debounce
 unsigned long ultimaPulsacion = 0;
 const unsigned long DEBOUNCE_DELAY = 250;
+bool estadoAnteriorSR = HIGH;
+bool pulsacionDetectada = false;
 
 void setup() {
   Serial.begin(9600);
@@ -112,15 +115,19 @@ void loop() {
 }
 
 void iniciarModoNormal() {
-  Serial.println("========================================");
-  Serial.println("       TEST MODO NORMAL");
-  Serial.println("========================================");
-  Serial.println("Pulse SR (pulsador derecho) para comenzar...");
-  Serial.println();
+  if (!mensajeMostrado) {
+    Serial.println("========================================");
+    Serial.println("       TEST MODO NORMAL");
+    Serial.println("========================================");
+    Serial.println("Pulse SR (pulsador derecho) para comenzar...");
+    Serial.println();
+    mensajeMostrado = true;
+  }
 
   if (esperarPulsacionSR()) {
     sensorActual = 0;
     esperandoPulsacion = true;
+    mensajeMostrado = false;
     estadoActual = TEST_MODO_NORMAL;
   }
 }
@@ -131,22 +138,27 @@ void ejecutarTestModoNormal() {
     estadoActual = INICIO_MODO_MKMK;
     sensorActual = 0;
     esperandoPulsacion = true;
+    mensajeMostrado = false;
     return;
   }
 
   if (esperandoPulsacion) {
-    Serial.println("----------------------------------------");
-    Serial.print("Sensor ");
-    Serial.print(sensorActual + 1);
-    Serial.print(" de ");
-    Serial.print(NUM_SENSORES_NORMAL);
-    Serial.print(": ");
-    Serial.println(sensoresNormal[sensorActual]);
-    Serial.println("Pulse SR para comenzar el test...");
-    Serial.println();
+    if (!mensajeMostrado) {
+      Serial.println("----------------------------------------");
+      Serial.print("Sensor ");
+      Serial.print(sensorActual + 1);
+      Serial.print(" de ");
+      Serial.print(NUM_SENSORES_NORMAL);
+      Serial.print(": ");
+      Serial.println(sensoresNormal[sensorActual]);
+      Serial.println("Pulse SR para comenzar el test...");
+      Serial.println();
+      mensajeMostrado = true;
+    }
 
     if (esperarPulsacionSR()) {
       esperandoPulsacion = false;
+      mensajeMostrado = false;
       ultimoRefresh = 0;
       Serial.println("Iniciando lectura (pulse SR para siguiente sensor)...");
     }
@@ -161,23 +173,28 @@ void ejecutarTestModoNormal() {
     if (leerPulsadorSR()) {
       sensorActual++;
       esperandoPulsacion = true;
+      mensajeMostrado = false;
       Serial.println();
     }
   }
 }
 
 void iniciarModoMkMk() {
-  Serial.println();
-  Serial.println("========================================");
-  Serial.println("       TEST MODO MKMK");
-  Serial.println("========================================");
-  Serial.println("ATENCION: Cambie el interruptor a modo MkMk");
-  Serial.println("Pulse SR (pulsador derecho) para comenzar...");
-  Serial.println();
+  if (!mensajeMostrado) {
+    Serial.println();
+    Serial.println("========================================");
+    Serial.println("       TEST MODO MKMK");
+    Serial.println("========================================");
+    Serial.println("ATENCION: Cambie el interruptor a modo MkMk");
+    Serial.println("Pulse SR (pulsador derecho) para comenzar...");
+    Serial.println();
+    mensajeMostrado = true;
+  }
 
   if (esperarPulsacionSR()) {
     sensorActual = 0;
     esperandoPulsacion = true;
+    mensajeMostrado = false;
     estadoActual = TEST_MODO_MKMK;
   }
 }
@@ -186,22 +203,27 @@ void ejecutarTestModoMkMk() {
   if (sensorActual >= NUM_SENSORES_MKMK) {
     // Terminado el modo MkMk
     estadoActual = FIN_TEST;
+    mensajeMostrado = false;
     return;
   }
 
   if (esperandoPulsacion) {
-    Serial.println("----------------------------------------");
-    Serial.print("Sensor ");
-    Serial.print(sensorActual + 1);
-    Serial.print(" de ");
-    Serial.print(NUM_SENSORES_MKMK);
-    Serial.print(": ");
-    Serial.println(sensoresMkMk[sensorActual]);
-    Serial.println("Pulse SR para comenzar el test...");
-    Serial.println();
+    if (!mensajeMostrado) {
+      Serial.println("----------------------------------------");
+      Serial.print("Sensor ");
+      Serial.print(sensorActual + 1);
+      Serial.print(" de ");
+      Serial.print(NUM_SENSORES_MKMK);
+      Serial.print(": ");
+      Serial.println(sensoresMkMk[sensorActual]);
+      Serial.println("Pulse SR para comenzar el test...");
+      Serial.println();
+      mensajeMostrado = true;
+    }
 
     if (esperarPulsacionSR()) {
       esperandoPulsacion = false;
+      mensajeMostrado = false;
       ultimoRefresh = 0;
       Serial.println("Iniciando lectura (pulse SR para siguiente sensor)...");
     }
@@ -216,6 +238,7 @@ void ejecutarTestModoMkMk() {
     if (leerPulsadorSR()) {
       sensorActual++;
       esperandoPulsacion = true;
+      mensajeMostrado = false;
       Serial.println();
     }
   }
@@ -236,20 +259,22 @@ void finalizarTest() {
 }
 
 bool esperarPulsacionSR() {
-  if (leerPulsadorSR()) {
-    delay(300); // Pequeña pausa para evitar dobles lecturas
-    return true;
-  }
-  return false;
+  return leerPulsadorSR();
 }
 
 bool leerPulsadorSR() {
-  if (digitalRead(PIN_SR) == LOW) {
+  bool estadoActualSR = digitalRead(PIN_SR);
+
+  // Detectar flanco de bajada (HIGH -> LOW) = pulsación
+  if (estadoAnteriorSR == HIGH && estadoActualSR == LOW) {
     if (millis() - ultimaPulsacion > DEBOUNCE_DELAY) {
       ultimaPulsacion = millis();
+      estadoAnteriorSR = estadoActualSR;
       return true;
     }
   }
+
+  estadoAnteriorSR = estadoActualSR;
   return false;
 }
 
