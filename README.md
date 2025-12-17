@@ -75,15 +75,38 @@ Instala las siguientes librerías desde el Gestor de Librerías del Arduino IDE:
    - Observa los valores en tiempo real (actualización cada 0.5 segundos)
    - Pulsa **SR** nuevamente para pasar al siguiente sensor
 
-4. **Cambia al Modo MkMk**
-   - Cuando termine el Modo Normal, el programa pedirá cambiar al Modo MkMk
-   - **Cambia el interruptor físico** de la placa a modo MkMk
-   - Pulsa **SR** para continuar
+4. **Test de Modo MkMk - IMPORTANTE**
 
-5. **Prueba los pines en Modo MkMk**
-   - Repite el proceso para cada pin (A0-A7, D2, D3)
+   Cuando termine el Modo Normal, el programa iniciará el Test de Modo MkMk.
 
-6. **Finalización**
+   **ATENCIÓN**: En modo MkMk no se detecta la pulsación de SR, por lo que debes seguir este procedimiento para cada sensor:
+
+   **Procedimiento para cada sensor en Modo MkMk:**
+
+   a. **Mantén el interruptor en MODO NORMAL**
+
+   b. **Pulsa SR** (pulsador derecho)
+      - El programa indicará qué sensor/pin se va a probar
+
+   c. **Cambia el interruptor a MODO MKMK**
+      - Ahora podrás observar los valores del sensor en el Serial Monitor
+      - Los valores se actualizarán cada 0.5 segundos
+
+   d. **Para pasar al siguiente sensor:**
+      - Vuelve a cambiar el interruptor a **MODO NORMAL**
+      - Pulsa **SR** para avanzar al siguiente sensor
+      - Vuelve a cambiar a **MODO MKMK** para ver los valores
+
+   e. **Repite el proceso** para todos los pines (A0, A1, A2, A3, A6, A7, D2, D3)
+
+   **Resumen visual:**
+   ```
+   Para cada sensor:
+   MODO NORMAL → Pulsar SR → MODO MKMK → Ver valores →
+   MODO NORMAL → Pulsar SR → MODO MKMK → Ver valores → ...
+   ```
+
+5. **Finalización**
    - Al completar todos los tests, verás un mensaje de confirmación
    - Para reiniciar, presiona el botón **RESET** del Arduino
 
