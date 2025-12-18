@@ -324,7 +324,7 @@ void leerSensorNormal(int sensor) {
 
     case 6: // Temperatura
       Serial.print("Temperatura: ");
-      Serial.println(analogRead(PIN_TEMP));
+      Serial.println(0.4658 * analogRead(PIN_TEMP) - 50.00);
       break;
 
     case 7: // Micrófono
