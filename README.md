@@ -16,23 +16,61 @@ El usuario controla el flujo del test mediante el pulsador SR (derecho) y puede 
 - Arduino Uno
 - Placa de robótica educativa con los siguientes componentes:
 
+### Diagrama de Conexiones
+
+```
+                    ┌─────────────────────────────┐
+                    │      ARDUINO UNO            │
+                    │                             │
+    Pulsador SR ────┤ D2                      A7  ├──── Micrófono
+    Pulsador SL ────┤ D3                      A6  ├──── Temperatura
+                    │ D4                      A5  ├──┐
+                    │ D5                      A4  ├──┤ Acelerómetro
+                    │ D6                      A3  ├──── LDR (Luz)
+                    │ D7                      A2  ├──── (Libre - Modo MkMk)
+                    │ D8                      A1  ├──── Joystick Y
+                    │ D9                      A0  ├──── Joystick X
+                    │ D10                         │
+                    │ D11                         │
+                    │ D12                         │
+                    │ D13                         │
+                    │                             │
+                    │ GND  5V  3.3V  RESET  AREF  │
+                    └─────────────────────────────┘
+
+    I2C (Acelerómetro LIS3DH):
+    ├─ SDA → A4
+    └─ SCL → A5
+```
+
 ### Sensores - Modo Normal
 
-| Pin | Sensor |
-|-----|--------|
-| D2 | SR - Pulsador derecho |
-| D3 | SL - Pulsador izquierdo |
-| A0 | Joystick - Eje X (analógico) |
-| A1 | Joystick - Eje Y (analógico) |
-| A4, A5 | Acelerómetro LIS3DH (I2C) |
-| A3 | LDR - Sensor de luz (analógico) |
-| A6 | Sensor de temperatura (analógico) |
-| A7 | Micrófono (analógico) |
+| Pin      | Tipo      | Sensor / Componente          | Descripción                    |
+|----------|-----------|------------------------------|--------------------------------|
+| D2       | Digital   | SR - Pulsador derecho        | Control de navegación del test |
+| D3       | Digital   | SL - Pulsador izquierdo      | Pulsador secundario            |
+| A0       | Analógico | Joystick X                   | Eje horizontal del joystick    |
+| A1       | Analógico | Joystick Y                   | Eje vertical del joystick      |
+| A4 (SDA) | I2C       | Acelerómetro LIS3DH          | Sensor de aceleración 3 ejes   |
+| A5 (SCL) | I2C       | Acelerómetro LIS3DH          | Sensor de aceleración 3 ejes   |
+| A3       | Analógico | LDR - Sensor de luz          | Sensor de luminosidad          |
+| A6       | Analógico | Sensor de temperatura        | Sensor de temperatura analógico|
+| A7       | Analógico | Micrófono                    | Sensor de sonido               |
 
 ### Pines - Modo MkMk
 
-- A0, A1, A2, A3, A6, A7 (pines analógicos)
-- D2, D3 (pines digitales)
+En modo MkMk, los pines se prueban directamente sin asignación específica de sensor:
+
+| Pin | Tipo      | Rango de Valores |
+|-----|-----------|------------------|
+| A0  | Analógico | 0 - 1023         |
+| A1  | Analógico | 0 - 1023         |
+| A2  | Analógico | 0 - 1023         |
+| A3  | Analógico | 0 - 1023         |
+| A6  | Analógico | 0 - 1023         |
+| A7  | Analógico | 0 - 1023         |
+| D2  | Digital   | HIGH (1) / LOW (0)|
+| D3  | Digital   | HIGH (1) / LOW (0)|
 
 ## Librerías Necesarias
 
